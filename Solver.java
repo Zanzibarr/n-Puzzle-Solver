@@ -92,16 +92,16 @@ public class Solver {
 
         String outBuilder = goal.toString();
 
-        int steps = goal.gCost()+1;
-        String[] output = new String[steps];
-        for (int i = steps-1; i >= 0; i--) {
+        int steps = goal.gCost();
+        String[] output = new String[steps+1];
+        for (int i = steps; i >= 0; i--) {
 
             output[i] = outBuilder;
             outBuilder = visited.get(outBuilder);
 
         }
 
-        for (int i = 0; i < steps; i++) System.out.println(output[i]);
+        for (int i = 0; i <= steps; i++) System.out.println(output[i]);
         
         return steps;
     }
