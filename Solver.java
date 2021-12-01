@@ -47,22 +47,27 @@ public class Solver {
     public static void main(String[] args) throws IOException {
 
         FileReader file = new FileReader("board.txt");
-        BufferedReader fileReader = new BufferedReader(file);
-        n = Integer.parseInt(fileReader.readLine());
-        String rt = fileReader.readLine();
-        fileReader.close();
-        file.close();
-            
-        /**/long start = System.nanoTime();
+        try (BufferedReader fileReader = new BufferedReader(file)) {
 
-        Board root = new Board(rt);
-        root.root();
-        int moves = solve(root);
+            n = Integer.parseInt(fileReader.readLine());
+            String rt = fileReader.readLine();
+            fileReader.close();
+            file.close();
+                
+            /**/long start = System.nanoTime();
 
-        System.out.println(moves+" moves");
-    
-        /**/long finish = System.nanoTime();
-        /**/System.out.println((double)(finish - start) / 1000000000l+" seconds");
+            Board root = new Board(rt);
+            root.root();
+            int moves = solve(root);
+
+            System.out.println(moves+" moves");
+   
+            /**/long finish = System.nanoTime();
+            /**/System.out.println((double)(finish - start) / 1000000000l+" seconds");
+
+        } catch (NumberFormatException e) {
+            System.out.println("Number Format Exception");
+        }
 
     }
 
@@ -104,20 +109,6 @@ public class Solver {
         for (int i = 0; i <= steps; i++) System.out.println(output[i]);
         
         return steps;
-    }
-
-    public static String boardToString(int[][] tiles) {
-
-        StringBuilder toStrBuild = new StringBuilder();
-
-        for (int i = 0; i < Solver.n; i++) for (int j = 0; j < Solver.n; j++) {
-
-            toStrBuild.append(tiles[i][j]);
-            toStrBuild.append(" ");
-
-        }
-
-        return toStrBuild.toString();
 
     }
 

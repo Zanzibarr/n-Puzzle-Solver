@@ -108,8 +108,17 @@ public class Board {
     public String toString() { return toString; }
 
     private void calculateString() {
-        
-        toString = Solver.boardToString(tiles);
+
+        StringBuilder toStrBuild = new StringBuilder();
+
+        for (int i = 0; i < Solver.n; i++) for (int j = 0; j < Solver.n; j++) {
+
+            toStrBuild.append(tiles[i][j]);
+            toStrBuild.append(" ");
+
+        }
+
+        toString = toStrBuild.toString();
 
     }
     
