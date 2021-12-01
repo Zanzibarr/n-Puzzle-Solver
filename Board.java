@@ -32,7 +32,7 @@ public class Board {
         
     }
 
-    public Board(int[][] inTiles) {
+    private Board(int[][] inTiles) {
 
         tiles = new int[Solver.n][Solver.n];
 
@@ -42,9 +42,7 @@ public class Board {
 
             if (tiles[i][j] == 0)
                 zero = i*Solver.n+j;
-            else
-                hCost +=  Math.abs(i - (tiles[i][j]-1)/Solver.n) + Math.abs(j - (tiles[i][j]-1)%Solver.n);
-            
+                
         }
 
     }
