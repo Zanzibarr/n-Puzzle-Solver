@@ -56,7 +56,7 @@ public class Solver {
                 
             /**/long start = System.nanoTime();
 
-            Board root = new Board(rt);
+            Board root = new Board(rt+" ");
             root.root();
             int moves = solve(root);
 

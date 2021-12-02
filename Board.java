@@ -81,8 +81,7 @@ public class Board {
         for (byte i = 0; i < counter; i++) {
 
             ret[i] = new Board(tiles);
-            ret[i].switcher(z, switches[i], hCost);
-            ret[i].calculateString();
+            ret[i].switcher(z, switches[i], hCost, toString);
             ret[i].setFather(toString);
             ret[i].setFatherZero(zero);
             ret[i].setCost(gCost + 1, ret[i].hCost());
@@ -104,21 +103,6 @@ public class Board {
     public String father() { return father; }
 
     public String toString() { return toString; }
-
-    private void calculateString() {
-
-        StringBuilder toStrBuild = new StringBuilder();
-
-        for (int i = 0; i < Solver.n; i++) for (int j = 0; j < Solver.n; j++) {
-
-            toStrBuild.append(tiles[i][j]);
-            toStrBuild.append(" ");
-
-        }
-
-        toString = toStrBuild.toString();
-
-    }
     
     private int setCost(int g, int h) {
 
@@ -131,7 +115,7 @@ public class Board {
 
     private void setFatherZero(int z) { fatherZero = z; }
     
-    private void switcher(int[] z, int[] n_in, int h){
+    private void switcher(int[] z, int[] n_in, int h, String s){
 
         hCost = h;
 
@@ -141,6 +125,14 @@ public class Board {
         tiles[n_in[0]][n_in[1]] = 0;
 
         hCost +=  Math.abs(z[0] - (tiles[z[0]][z[1]]-1)/Solver.n) + Math.abs(z[1] - (tiles[z[0]][z[1]]-1)%Solver.n);
+
+        toString = String.valueOf(" " + s);
+
+        toString = toString.replace(" " + 0 + " ", " x" + tiles[z[0]][z[1]] + " ");
+        toString = toString.replace(" " + tiles[z[0]][z[1]] + " ", " " + 0 + " ");
+        toString = toString.replace("x" + tiles[z[0]][z[1]] + " ", "" + tiles[z[0]][z[1]]+" ");
+
+        toString = toString.substring(1);
 
         zero = n_in[0] * Solver.n + n_in[1];
 
