@@ -51,7 +51,6 @@ public class Solver {
 
             n = Integer.parseInt(fileReader.readLine());
             String rt = fileReader.readLine();
-            fileReader.close();
             file.close();
                 
             /**/long start = System.nanoTime();
@@ -59,14 +58,15 @@ public class Solver {
             Board root = new Board(rt+" ");
             root.root();
             int moves = solve(root);
-
-            System.out.println(moves+" moves");
    
             /**/long finish = System.nanoTime();
             /**/System.out.println((double)(finish - start) / 1000000000l+" seconds");
 
+            System.out.println(moves+" moves");
+
         } catch (NumberFormatException e) {
             System.out.println("Number Format Exception");
+            file.close();
         }
 
     }
