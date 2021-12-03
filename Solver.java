@@ -81,7 +81,7 @@ public class Solver {
 
         while (!board.toString().equals(goalBoard)) {
 
-            Board[] children = board.children();
+            Board[] children = board.nearby();
 
             int end = children.length;
             for (int i = 0; i < end; i++) {
