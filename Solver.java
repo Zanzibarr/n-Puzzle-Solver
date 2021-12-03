@@ -47,27 +47,24 @@ public class Solver {
     public static void main(String[] args) throws IOException {
 
         FileReader file = new FileReader("board.txt");
-        try (BufferedReader fileReader = new BufferedReader(file)) {
+        BufferedReader fileReader = new BufferedReader(file));
 
-            n = Integer.parseInt(fileReader.readLine());
-            String rt = fileReader.readLine();
-            file.close();
-                
-            /**/long start = System.nanoTime();
+        n = Integer.parseInt(fileReader.readLine());
+        String rt = fileReader.readLine();
 
-            Board root = new Board(rt+" ");
-            root.root();
-            int moves = solve(root);
-   
-            /**/long finish = System.nanoTime();
-            /**/System.out.println((double)(finish - start) / 1000000000l+" seconds");
+        fileReader.close();
+        file.close();
 
-            System.out.println(moves+" moves");
+        /**/long start = System.nanoTime();
 
-        } catch (NumberFormatException e) {
-            System.out.println("Number Format Exception");
-            file.close();
-        }
+        Board root = new Board(rt+" ");
+        root.root();
+        int moves = solve(root);
+
+        /**/long finish = System.nanoTime();
+        /**/System.out.println((double)(finish - start) / 1000000000l+" seconds");
+
+        System.out.println(moves+" moves");
 
     }
 
