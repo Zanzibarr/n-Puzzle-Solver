@@ -56,10 +56,8 @@ public class Solver {
         file.close();
 
         /**/long start = System.nanoTime();
-
-        Board root = new Board(rt+" ");
-        root.root();
-        int moves = solve(root);
+        
+        int moves = solve(rt);
 
         /**/long finish = System.nanoTime();
         /**/System.out.println((double)(finish - start) / 1000000000l+" seconds");
@@ -68,13 +66,15 @@ public class Solver {
 
     }
 
-    public static int solve(Board board) {
+    public static int solve(String root) {
+        
+        Board board = new Board(root + " ");
+        board.root();
 
         PriorityQueue<Board> nextBoards = new PriorityQueue<>(new BoardComparator());
         HashMap<String, String> visited = new HashMap<>();
-        Board goal;
 
-        do {
+        while(!board.toString().equals(goalBoard)) {
 
             Board[] children = board.children();
             
@@ -87,14 +87,13 @@ public class Solver {
             }
 
             visited.put(board.toString(), board.father());
-            goal = board;
             board = nextBoards.poll();
 
-        } while(!goal.toString().equals(goalBoard));
+        }
 
-        String outBuilder = goal.toString();
+        String outBuilder = board.toString();
 
-        int steps = goal.gCost();
+        int steps = board.gCost();
         String[] output = new String[steps+1];
         for (int i = steps; i >= 0; i--) {
 
