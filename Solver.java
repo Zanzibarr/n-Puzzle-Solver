@@ -46,7 +46,12 @@ public class Solver {
 
     public static void main(String[] args) throws IOException {
 
-        FileReader file = new FileReader("board.txt");
+        if (args.length < 1) {
+            System.out.println("Missing Input File.");
+            System.exit(1);
+        }
+
+        FileReader file = new FileReader(args[0]);
         BufferedReader fileReader = new BufferedReader(file);
 
         n = Integer.parseInt(fileReader.readLine());
