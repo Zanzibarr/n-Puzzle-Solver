@@ -74,11 +74,9 @@ public class Board {
      * Complessità di O(n^2) ereditata dai metodi Solver.setGoalBoard() e Solver.setNullBoard() 
      */
     public void root() {
-
-        Solver.setGoalBoard();
         
-        setCost(0, hCost);
-        father = Solver.setNullBoard();
+        gCost = 0;
+        father = "0";
         fatherZero = -1;
 
     }
@@ -143,6 +141,15 @@ public class Board {
     public int fCost() { return hCost + gCost; }
 
     /**
+     * Metodo chiamato per accedere all'euristica del nodo
+     * 
+     * Complessità costante
+     * 
+     * @return L'euristica del nodo
+     */
+    public int hCost() { return hCost; }
+
+    /**
      * Metodo chiamato per accedere al numero di passi compiuti
      * 
      * Complessità costante
@@ -168,24 +175,7 @@ public class Board {
      * @return La rappresentazione a stringa della Board
      */
     public String toString() { return toString; }
-    
-    /**
-     * Metodo chiamato per impostare salvare l'euristica e il numero di passi eseguiti calcolando il costo della Boar
-     * 
-     * Complessità costante
-     * 
-     * @param g Il numero di passi eseguiti
-     * @param h L'euristica della Board
-     * @return Il costo del nodo
-     */
-    private int setCost(int g, int h) {
-
-        gCost = g;
-        hCost = h;
-        return fCost();
-
-    }
-    
+        
     /**
      * Metodo chiamato per impostare salvare il numero di passi eseguiti
      * 
@@ -236,12 +226,12 @@ public class Board {
         hCost = h;
 
         hCost -=  Math.abs(n_in[0] - (tiles[n_in[0]][n_in[1]]-1)/Solver.n) + Math.abs(n_in[1] - (tiles[n_in[0]][n_in[1]]-1)%Solver.n);
-
+        
         tiles[z[0]][z[1]] = tiles[n_in[0]][n_in[1]];
         tiles[n_in[0]][n_in[1]] = 0;
 
         hCost +=  Math.abs(z[0] - (tiles[z[0]][z[1]]-1)/Solver.n) + Math.abs(z[1] - (tiles[z[0]][z[1]]-1)%Solver.n);
-
+        
         zero = n_in[0] * Solver.n + n_in[1];
 
     }
