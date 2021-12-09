@@ -13,7 +13,7 @@ public class Board {
     /**
      * Costruttore per trasformare una String in oggetto di tipo Board
      * Chiamato solo dalla radice (tavola da risolvere), per le altre chiamate viene usato il costruttore privato
-     * Calcola in automatico il toString (copia dalla stringa passata come parametro), il manhattan (hCost) e la posizione
+     * Calcola in automatico il toString (copia dalla stringa passata come parametro), il manhattan + linear Conflict (hCost) e la posizione
      * della cella vuota (zero)
      * 
      * Complessità di O(n^2)
@@ -35,8 +35,10 @@ public class Board {
 
             if (tiles[i][j] == 0)
                 zero = i*Solver.n+j;
-            else
-                hCost +=  Math.abs(i - (tiles[i][j]-1)/Solver.n) + Math.abs(j - (tiles[i][j]-1)%Solver.n);
+            else {
+                hCost +=  Math.abs(i - (tiles[i][j]-1)/Solver.n) + Math.abs(j - (tiles[i][j]-1)%Solver.n);  //manhattan
+                if ((i == (tiles[i][j]-1)/Solver.n || j == (tiles[i][j]-1)%Solver.n) && i*Solver.n+j+1 != tiles[i][j] && i*Solver.n+j+1 == tiles[(tiles[i][j]-1)/Solver.n][(tiles[i][j]-1)%Solver.n]) hCost++;  //linear conflict
+            }
             
         }
         
@@ -226,11 +228,13 @@ public class Board {
         hCost = h;
 
         hCost -=  Math.abs(n_in[0] - (tiles[n_in[0]][n_in[1]]-1)/Solver.n) + Math.abs(n_in[1] - (tiles[n_in[0]][n_in[1]]-1)%Solver.n);
+        if ((n_in[0] == (tiles[n_in[0]][n_in[1]]-1)/Solver.n || n_in[1] == (tiles[n_in[0]][n_in[1]]-1)%Solver.n) && n_in[0]*Solver.n+n_in[1]+1 != tiles[n_in[0]][n_in[1]] && n_in[0]*Solver.n+n_in[1]+1 == tiles[(tiles[n_in[0]][n_in[1]]-1)/Solver.n][(tiles[n_in[0]][n_in[1]]-1)%Solver.n]) hCost -= 2;
         
         tiles[z[0]][z[1]] = tiles[n_in[0]][n_in[1]];
         tiles[n_in[0]][n_in[1]] = 0;
 
         hCost +=  Math.abs(z[0] - (tiles[z[0]][z[1]]-1)/Solver.n) + Math.abs(z[1] - (tiles[z[0]][z[1]]-1)%Solver.n);
+        if ((z[0] == (tiles[z[0]][z[1]]-1)/Solver.n || z[1] == (tiles[z[0]][z[1]]-1)%Solver.n) && z[0]*Solver.n+z[1]+1 != tiles[z[0]][z[1]] && z[0]*Solver.n+z[1]+1 == tiles[(tiles[z[0]][z[1]]-1)/Solver.n][(tiles[z[0]][z[1]]-1)%Solver.n]) hCost += 2;
         
         zero = n_in[0] * Solver.n + n_in[1];
 

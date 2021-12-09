@@ -8,11 +8,31 @@ import java.io.BufferedReader;
 public class Solver {
     
     public static int n;
+    private static String goalBoard;
 
     public static class BoardComparator implements Comparator<Board> {
         public int compare(Board b1, Board b2) {
             return b1.fCost() - b2.fCost();
         }
+    }
+
+    private static String goalBoard() {
+
+        StringBuilder strBuild = new StringBuilder();
+
+        for (int i = 1; i < n*n; i++) {
+
+            strBuild.append(i);
+            strBuild.append(" ");
+
+        }
+
+        strBuild.append("0 ");
+
+        goalBoard = strBuild.toString();
+
+        return goalBoard;
+
     }
 
     public static void main(String[] args) throws IOException {
@@ -65,12 +85,17 @@ public class Solver {
             visited.put(board.toString(), board.father());
             board = nextBoards.poll();
 
-        }
-
-        visited.put(board.toString(), board.father());
-        String outBuilder = board.toString();
+        }        
 
         int steps = board.gCost();
+
+        visited.put(board.toString(), board.father());
+        if (!board.toString().equals(goalBoard())) {
+            visited.put(goalBoard, board.toString());
+            steps++;
+        }
+
+        String outBuilder = goalBoard;
         String[] output = new String[steps + 1];
         for (int i = steps; i >= 0; i--) {
 
