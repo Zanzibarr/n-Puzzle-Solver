@@ -36,8 +36,8 @@ public class Board {
             if (tiles[i][j] == 0)
                 zero = i*Solver.n+j;
             else {
-                hCost +=  Math.abs(i - (tiles[i][j]-1)/Solver.n) + Math.abs(j - (tiles[i][j]-1)%Solver.n);  //manhattan
-                if ((i == (tiles[i][j]-1)/Solver.n || j == (tiles[i][j]-1)%Solver.n) && i*Solver.n+j+1 != tiles[i][j] && i*Solver.n+j+1 == tiles[(tiles[i][j]-1)/Solver.n][(tiles[i][j]-1)%Solver.n]) hCost++;  //linear conflict
+                hCost +=  manhattan(i, j);  //manhattan
+                if (linearConflict(i, j)) hCost++;  //linear conflict
             }
             
         }
@@ -71,9 +71,9 @@ public class Board {
     }
 
     /**
-     * Metodo chiamato solo una volta dalla radice per impostare alcune variabili statiche globali.
+     * Metodo chiamato solo una volta dalla radice per impostare alcune variabili locali della radice.
      * 
-     * Complessità di O(n^2) ereditata dai metodi Solver.setGoalBoard() e Solver.setNullBoard() 
+     * Complessità costante
      */
     public void root() {
         
@@ -110,20 +110,19 @@ public class Board {
             n2 = off[i][1];
 
             if (n1 >= 0 && n1 < Solver.n && n2 >= 0 && n2 < Solver.n && n1*Solver.n+n2 != fatherZero)
-                switches[counter++] = off[i];
+                switches[counter++] = off[i];   //salvo solo le posizioni accettabili
         
         }
 
         Board[] ret = new Board[counter];
 
-        for (byte i = 0; i < counter; i++) {
+        for (byte i = 0; i < counter; i++) {    //genero le tavole in base alle posizioni accettabili
 
             ret[i] = new Board(tiles);
-            ret[i].switcher(z, switches[i], hCost);
+            ret[i].switcher(z, switches[i], hCost, gCost);
             ret[i].calculateString();
             ret[i].setFather(toString);
             ret[i].setFatherZero(zero);
-            ret[i].setGCost(gCost + 1);
             
         }
         
@@ -140,7 +139,11 @@ public class Board {
      * 
      * @return La somma tra l'euristica e il numero di passi compiuti
      */
-    public int fCost() { return hCost + gCost; }
+    public int fCost() {
+
+        return hCost + gCost;
+
+    }
 
     /**
      * Metodo chiamato per accedere all'euristica del nodo
@@ -149,7 +152,11 @@ public class Board {
      * 
      * @return L'euristica del nodo
      */
-    public int hCost() { return hCost; }
+    public int hCost() {
+
+        return hCost;
+    
+    }
 
     /**
      * Metodo chiamato per accedere al numero di passi compiuti
@@ -158,7 +165,11 @@ public class Board {
      * 
      * @return Il numero di passi compiuti
      */
-    public int gCost() { return gCost; }
+    public int gCost() {
+        
+        return gCost;
+    
+    }
 
     /**
      * Metodo chiamato per accedere alla rappresentazione a stringa della posizione precedente alla chiamante
@@ -167,7 +178,11 @@ public class Board {
      * 
      * @return La rappresentazione a stringa della posizione precedente alla chiamante
      */
-    public String father() { return father; }
+    public String father() {
+        
+        return father;
+    
+    }
 
     /**
      * Metodo chiamato per accedere alla rappresentazione a stringa della Board
@@ -176,20 +191,44 @@ public class Board {
      * 
      * @return La rappresentazione a stringa della Board
      */
-    public String toString() { return toString; }
+    public String toString() {
         
+        return toString;
+    
+    }
+
     /**
-     * Metodo chiamato per impostare salvare il numero di passi eseguiti
+     * Metodo chiamato per calcolare la manhattan distance della cella nella posizione (i, j)
      * 
      * Complessità costante
      * 
-     * @param g Il numero di passi eseguiti
-     * @return Il costo del nodo
+     * @param i Indice di riga della cella
+     * @param j Indice di colonna della cella
+     * @return La manhattan distance della cella in posizione (i, j)
      */
-    private void setGCost(int g) {
+    private int manhattan(int i, int j) {
+        
+        return Math.abs(i - (tiles[i][j]-1)/Solver.n) + Math.abs(j - (tiles[i][j]-1)%Solver.n);
+    
+    }
 
-        gCost = g;
+    /**
+     * Metodo chiamato per determinare se la cella nella posizione (i, j) genera un conflitto lineare
+     * 
+     * Complessità costante
+     * 
+     * @param i Indice di riga della cella
+     * @param j Indice di colonna della cella
+     * @return True se avviene un conflitto lineare, false altrimenti
+     */
+    private boolean linearConflict(int i, int j) {
 
+        //  ( i == (tiles[i][j]-1)/Solver.n || j == (tiles[i][j]-1)%Solver.n );                 Controllo se l'eventuale conflitto avviene sulla stessa riga / colonna
+        //  ( i*Solver.n+j+1 != tiles[i][j] );                                                  Controllo che la cella non sia già in posizione
+        //  ( i*Solver.n+j+1 == tiles[(tiles[i][j]-1)/Solver.n][(tiles[i][j]-1)%Solver.n] );    Controllo se è presente il conflitto
+
+        return ( i == (tiles[i][j]-1)/Solver.n || j == (tiles[i][j]-1)%Solver.n ) && ( i*Solver.n+j+1 != tiles[i][j] ) && ( i*Solver.n+j+1 == tiles[(tiles[i][j]-1)/Solver.n][(tiles[i][j]-1)%Solver.n] );
+    
     }
 
     /**
@@ -199,7 +238,11 @@ public class Board {
      * 
      * @param f La rappresentazione a stringa della posizione precedente alla Board chiamante
      */
-    private void setFather(String f) { father = f; }
+    private void setFather(String f) {
+        
+        father = f;
+    
+    }
 
     /**
      * Metodo chiamato per importare la posizione della cella vuota nella posizione precedente alla Board chiamante
@@ -208,7 +251,11 @@ public class Board {
      * 
      * @param z La posizione della cella vuota nella posizione precedente alla Board chiamante
      */
-    private void setFatherZero(int z) { fatherZero = z; }
+    private void setFatherZero(int z) {
+        
+        fatherZero = z;
+    
+    }
     
     /**
      * Metodo chiamato per creare una nuova matrice partendo dalla Board precedente.
@@ -220,23 +267,26 @@ public class Board {
      * Complessità costante
      * 
      * @param z Posizione attuale della cella vuota
-     * @param n_in Posizione attuale della cella da sostituire alla cella vuota
+     * @param nIn Posizione attuale della cella da sostituire alla cella vuota
      * @param h Valore dell'euristica della Board precedente
      */
-    private void switcher(int[] z, int[] n_in, int h){
+    private void switcher(int[] z, int[] nIn, int h, int g){
 
         hCost = h;
 
-        hCost -=  Math.abs(n_in[0] - (tiles[n_in[0]][n_in[1]]-1)/Solver.n) + Math.abs(n_in[1] - (tiles[n_in[0]][n_in[1]]-1)%Solver.n);
-        if ((n_in[0] == (tiles[n_in[0]][n_in[1]]-1)/Solver.n || n_in[1] == (tiles[n_in[0]][n_in[1]]-1)%Solver.n) && n_in[0]*Solver.n+n_in[1]+1 != tiles[n_in[0]][n_in[1]] && n_in[0]*Solver.n+n_in[1]+1 == tiles[(tiles[n_in[0]][n_in[1]]-1)/Solver.n][(tiles[n_in[0]][n_in[1]]-1)%Solver.n]) hCost -= 2;
+        //Rimuovo il contributo all'euristica dato dalla cella che viene spostata
+        hCost -=  manhattan(nIn[0], nIn[1]);
+        if (linearConflict(nIn[0], nIn[1])) hCost -= 2;
         
-        tiles[z[0]][z[1]] = tiles[n_in[0]][n_in[1]];
-        tiles[n_in[0]][n_in[1]] = 0;
+        tiles[z[0]][z[1]] = tiles[nIn[0]][nIn[1]];
+        tiles[nIn[0]][nIn[1]] = 0;
 
-        hCost +=  Math.abs(z[0] - (tiles[z[0]][z[1]]-1)/Solver.n) + Math.abs(z[1] - (tiles[z[0]][z[1]]-1)%Solver.n);
-        if ((z[0] == (tiles[z[0]][z[1]]-1)/Solver.n || z[1] == (tiles[z[0]][z[1]]-1)%Solver.n) && z[0]*Solver.n+z[1]+1 != tiles[z[0]][z[1]] && z[0]*Solver.n+z[1]+1 == tiles[(tiles[z[0]][z[1]]-1)/Solver.n][(tiles[z[0]][z[1]]-1)%Solver.n]) hCost += 2;
+        //Aggiungo il contributo all'euristica dato dalla cella spostata
+        hCost +=  manhattan(z[0], z[1]);
+        if (linearConflict(z[0], z[1])) hCost += 2;
         
-        zero = n_in[0] * Solver.n + n_in[1];
+        zero = nIn[0] * Solver.n + nIn[1];
+        gCost = g + 1;
 
     }
 

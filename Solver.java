@@ -67,18 +67,21 @@ public class Solver {
         Board board = new Board(root + " ");
         board.root();
 
-        PriorityQueue<Board> nextBoards = new PriorityQueue<>(new BoardComparator());
-        HashMap<String, String> visited = new HashMap<>();
+        final PriorityQueue<Board> nextBoards = new PriorityQueue<>(new BoardComparator());
+        final HashMap<String, String> visited = new HashMap<>();
+
+        int index;
+        int end;
 
         while (board.hCost() != 0) {
 
             Board[] children = board.nearby();
 
-            int end = children.length;
-            for (int i = 0; i < end; i++) {
+            end = children.length;
+            for (index = 0; index < end; index++) {
 
-                if (!visited.containsKey(children[i].toString()))
-                    nextBoards.add(children[i]);
+                if (!visited.containsKey(children[index].toString()))
+                    nextBoards.add(children[index]);
 
             }
 
@@ -95,17 +98,16 @@ public class Solver {
             steps++;
         }
 
-        String outBuilder = goalBoard;
         String[] output = new String[steps + 1];
-        for (int i = steps; i >= 0; i--) {
+        for (index = steps; index >= 0; index--) {
 
-            output[i] = outBuilder;
-            outBuilder = visited.get(outBuilder);
+            output[index] = goalBoard;
+            goalBoard = visited.get(goalBoard);
 
         }
 
-        for (int i = 0; i <= steps; i++)
-            System.out.println(output[i]);
+        for (index = 0; index <= steps; index++)
+            System.out.println(output[index]);
 
         return steps;
 
