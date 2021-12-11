@@ -1,6 +1,6 @@
 Computer Stats:
 Intel 15-11600K 3.9GHz 6 Core - 12 Processori logici
-16GB Ran 3600MT/s
+16GB Ram 3600MT/s
 
 Ogni tavola è stata testata con il comando "java -Xmx10G Solver board.txt" per tenere fisso il limite della ram
 usata dalla jvm a 10GB.
