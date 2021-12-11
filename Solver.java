@@ -1,4 +1,5 @@
 import java.util.PriorityQueue;
+import java.util.Stack;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.io.FileReader;
@@ -88,28 +89,25 @@ public class Solver {
             visited.put(board.toString(), board.father());
             board = nextBoards.poll();
 
-        }        
-
-        int steps = board.gCost();
+        }
 
         visited.put(board.toString(), board.father());
-        if (!board.toString().equals(goalBoard())) {
+        if (!board.toString().equals(goalBoard()))
             visited.put(goalBoard, board.toString());
+
+        Stack<String> output = new Stack<>();
+
+        int steps = 0;
+
+        while (!goalBoard.equals("0")) {
+            output.push(goalBoard);
+            goalBoard = visited.get(goalBoard);
             steps++;
         }
+        
+        while (!output.isEmpty()) System.out.println(output.pop());
 
-        String[] output = new String[steps + 1];
-        for (index = steps; index >= 0; index--) {
-
-            output[index] = goalBoard;
-            goalBoard = visited.get(goalBoard);
-
-        }
-
-        for (index = 0; index <= steps; index++)
-            System.out.println(output[index]);
-
-        return steps;
+        return steps - 1;
 
     }
 

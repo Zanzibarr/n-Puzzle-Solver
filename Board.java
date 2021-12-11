@@ -48,12 +48,12 @@ public class Board {
      * Costruttore per trasformare una int[][] in oggetto di tipo Board
      * Chiamato solo dal metodo nearby(), per questo i calcoli che erano automatici nel costruttore pubblici
      * sono lasciati al metodo nearby()
-     * Calcola la posizione della cella vuota, valore necessario per il metodo switcher(..), chiamato subito dopo la costruzione
+     * Calcola la posizione della cella vuota, valore necessario per il metodo switcher(), chiamato subito dopo la costruzione
      * della Board nel metodo nearby
      * 
      * Complessità di O(n^2)
      * 
-     * @param inTiles
+     * @param inTiles La matrice da ricopiare (deep copy)
      */
     private Board(int[][] inTiles) {
 
@@ -91,7 +91,7 @@ public class Board {
      * Genera le possibili posizioni raggiungibili copiando la posizione attuale, e facendo scambi accurati
      * tra la cella vuota e una delle celle adiacenti, aggiornando tutte le variabili interne sensibili a questi cambiamenti.
      * 
-     * Complessità di O(n^2) ereditata dal costruttore privato Board(.) e dal metodo CalculateString()
+     * Complessità di O(n^2) ereditata dal costruttore privato Board() e dal metodo CalculateString()
      * 
      * @return Un array contenente le possibili mosse raggiungibili dalla Board chiamante
      */
