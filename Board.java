@@ -35,51 +35,71 @@ public class Board {
 
             if (tiles[i][j] == 0)
                 zero = i*Solver.n+j;
-            else {
-                hCost +=  manhattan(i, j);  //manhattan
-                if (linearConflict(i, j)) hCost++;  //linear conflict
-            }
+            else
+                hCost +=  manhattan(tiles, i, j);  //manhattan
             
         }
         
+        //Il linear conflict può essere usato solo a matrice completa
+        for (int i = 0; i < Solver.n; i++) for (int j = 0; j < Solver.n; j++) if (linearConflict(tiles, i, j)) hCost++;  //linear conflict
+        
+        gCost = 0;
+        father = null;
+        fatherZero = -1;
+        
     }
-
+    
     /**
-     * Costruttore per trasformare una int[][] in oggetto di tipo Board
-     * Chiamato solo dal metodo nearby(), per questo i calcoli che erano automatici nel costruttore pubblici
-     * sono lasciati al metodo nearby()
-     * Calcola la posizione della cella vuota, valore necessario per il metodo switcher(), chiamato subito dopo la costruzione
-     * della Board nel metodo nearby
+     * Costruttore per trasformare la matrice della mossa precedente int[][] in oggetto di tipo Board modificando opportunamente i vari valori
+     * Chiamato dal metodo nearby(), effettua tutti gli scambi e controlli necessari per generare una delle disposizioni vicini alla Board chiamante
      * 
      * Complessità di O(n^2)
      * 
      * @param inTiles La matrice da ricopiare (deep copy)
+     * @param z Le coordinate dello zero nemma disposizione chiamante
+     * @param nIn Le coordinate della cella da cambiare con lo zero
+     * @param h Il manhattan della Board chiamante
+     * @param g Il numero di passi della Board chiamante
+     * @param f La rappresentazione a stringa della Board chiamante
+     * @param fZero La posizione dello zero nella Board chiamante
      */
-    private Board(int[][] inTiles) {
+    private Board(int[][] inTiles, int[] z, int[] nIn, int h, int g, String f, int fZero) {
 
+        StringBuilder strBuild = new StringBuilder();
         tiles = new int[Solver.n][Solver.n];
+
+        hCost = h;
+
+        //Rimuovo il contributo all'euristica dato dalla cella che viene spostata
+        hCost -=  manhattan(inTiles, nIn[0], nIn[1]);
+        if (linearConflict(inTiles, nIn[0], nIn[1])) hCost -= 2;
 
         for (int i = 0; i < Solver.n; i++) for (int j = 0; j < Solver.n; j++) {
 
-            tiles[i][j] = inTiles[i][j];
+            if (z[0] == i && z[1] == j)
+                tiles[i][j] = inTiles[nIn[0]][nIn[1]];
+            else if (nIn[0] == i && nIn[1] == j)
+                tiles[i][j] = 0;
+            else
+                tiles[i][j] = inTiles[i][j];
+            
+            strBuild.append(tiles[i][j]);
+            strBuild.append(" ");
 
             if (tiles[i][j] == 0)
                 zero = i*Solver.n+j;
                 
         }
 
-    }
-
-    /**
-     * Metodo chiamato solo una volta dalla radice per impostare alcune variabili locali della radice.
-     * 
-     * Complessità costante
-     */
-    public void root() {
+        //Aggiungo il contributo all'euristica dato dalla cella spostata
+        hCost +=  manhattan(tiles, z[0], z[1]);
+        if (linearConflict(tiles, z[0], z[1])) hCost += 2;
         
-        gCost = 0;
-        father = "0";
-        fatherZero = -1;
+        zero = nIn[0] * Solver.n + nIn[1];
+        gCost = g + 1;
+        toString = strBuild.toString();
+        father = f;
+        fatherZero = fZero;
 
     }
 
@@ -96,35 +116,21 @@ public class Board {
      * @return Un array contenente le possibili mosse raggiungibili dalla Board chiamante
      */
     public Board[] nearby() {
-
-        byte counter = 0;
-        int n1;
-        int n2;
+        
         final int[] z = {(zero/Solver.n), (zero%Solver.n)};
         final int[][] off = {{(z[0]-1),z[1]},{z[0],(z[1]-1)},{(z[0]+1),z[1]},{z[0],(z[1]+1)}};
-        int[][] switches = new int[4][2];
 
-        for (int i = 0; i < 4; i++) {
+        Board[] ret = new Board[4];
+        int counter = 0;
 
-            n1 = off[i][0];
-            n2 = off[i][1];
+        for (byte i = 0; i < 4; i++) {
 
-            if (n1 >= 0 && n1 < Solver.n && n2 >= 0 && n2 < Solver.n && n1*Solver.n+n2 != fatherZero)
-                switches[counter++] = off[i];   //salvo solo le posizioni accettabili
-        
+            if (off[i][0] >= 0 && off[i][0] < Solver.n && off[i][1] >= 0 && off[i][1] < Solver.n && off[i][0]*Solver.n+off[i][1] != fatherZero)
+                ret[counter++] = new Board(tiles, z, off[i], hCost, gCost, toString, zero);
+
         }
 
-        Board[] ret = new Board[counter];
-
-        for (byte i = 0; i < counter; i++) {    //genero le tavole in base alle posizioni accettabili
-
-            ret[i] = new Board(tiles);
-            ret[i].switcher(z, switches[i], hCost, gCost);
-            ret[i].calculateString();
-            ret[i].setFather(toString);
-            ret[i].setFatherZero(zero);
-            
-        }
+        for (int i = counter; i < 4; i++) ret[i] = null;
         
         return ret;
 
@@ -206,9 +212,9 @@ public class Board {
      * @param j Indice di colonna della cella
      * @return La manhattan distance della cella in posizione (i, j)
      */
-    private int manhattan(int i, int j) {
+    private static int manhattan(int[][] inTiles, int i, int j) {
         
-        return Math.abs(i - (tiles[i][j]-1)/Solver.n) + Math.abs(j - (tiles[i][j]-1)%Solver.n);
+        return Math.abs(i - (inTiles[i][j]-1)/Solver.n) + Math.abs(j - (inTiles[i][j]-1)%Solver.n);
     
     }
 
@@ -221,93 +227,15 @@ public class Board {
      * @param j Indice di colonna della cella
      * @return True se avviene un conflitto lineare, false altrimenti
      */
-    private boolean linearConflict(int i, int j) {
+    private static boolean linearConflict(int[][] inTiles, int i, int j) {
 
+        //  ( inTiles[i][j] != 0 )                                                              Controllo che l'eventuale conflitto non sia con la cella vuota
         //  ( i == (tiles[i][j]-1)/Solver.n || j == (tiles[i][j]-1)%Solver.n );                 Controllo se l'eventuale conflitto avviene sulla stessa riga / colonna
         //  ( i*Solver.n+j+1 != tiles[i][j] );                                                  Controllo che la cella non sia già in posizione
         //  ( i*Solver.n+j+1 == tiles[(tiles[i][j]-1)/Solver.n][(tiles[i][j]-1)%Solver.n] );    Controllo se è presente il conflitto
 
-        return ( i == (tiles[i][j]-1)/Solver.n || j == (tiles[i][j]-1)%Solver.n ) && ( i*Solver.n+j+1 != tiles[i][j] ) && ( i*Solver.n+j+1 == tiles[(tiles[i][j]-1)/Solver.n][(tiles[i][j]-1)%Solver.n] );
+        return ( inTiles[i][j] != 0 ) && ( i == (inTiles[i][j]-1)/Solver.n || j == (inTiles[i][j]-1)%Solver.n ) && ( i*Solver.n+j+1 != inTiles[i][j] ) && ( i*Solver.n+j+1 == inTiles[(inTiles[i][j]-1)/Solver.n][(inTiles[i][j]-1)%Solver.n] );
     
-    }
-
-    /**
-     * Metodo chiamato per impostare la rappresentazione a stringa della posizione precedente alla Board chiamante
-     * 
-     * Complessità costante
-     * 
-     * @param f La rappresentazione a stringa della posizione precedente alla Board chiamante
-     */
-    private void setFather(String f) {
-        
-        father = f;
-    
-    }
-
-    /**
-     * Metodo chiamato per importare la posizione della cella vuota nella posizione precedente alla Board chiamante
-     * 
-     * Complessità costante
-     * 
-     * @param z La posizione della cella vuota nella posizione precedente alla Board chiamante
-     */
-    private void setFatherZero(int z) {
-        
-        fatherZero = z;
-    
-    }
-    
-    /**
-     * Metodo chiamato per creare una nuova matrice partendo dalla Board precedente.
-     * Metodo chiamato dal metodo nearby() che genera una Board identica alla posizione precedente, per poi
-     * modellarla in questo metodo.
-     * Esegue scambi accurati tra la cella vuota e una delle celle adiacenti, aggiornando tutte le variabili
-     * interne sensibili a questi cambiamenti.
-     * 
-     * Complessità costante
-     * 
-     * @param z Posizione attuale della cella vuota
-     * @param nIn Posizione attuale della cella da sostituire alla cella vuota
-     * @param h Valore dell'euristica della Board precedente
-     */
-    private void switcher(int[] z, int[] nIn, int h, int g){
-
-        hCost = h;
-
-        //Rimuovo il contributo all'euristica dato dalla cella che viene spostata
-        hCost -=  manhattan(nIn[0], nIn[1]);
-        if (linearConflict(nIn[0], nIn[1])) hCost -= 2;
-        
-        tiles[z[0]][z[1]] = tiles[nIn[0]][nIn[1]];
-        tiles[nIn[0]][nIn[1]] = 0;
-
-        //Aggiungo il contributo all'euristica dato dalla cella spostata
-        hCost +=  manhattan(z[0], z[1]);
-        if (linearConflict(z[0], z[1])) hCost += 2;
-        
-        zero = nIn[0] * Solver.n + nIn[1];
-        gCost = g + 1;
-
-    }
-
-    /**
-     * Metodo chiamato per creare la rappresentazione a stringa della Board
-     * 
-     * Complessità di O(n^2)
-     */
-    private void calculateString() {
-
-        StringBuilder strBuild = new StringBuilder();
-
-        for (int i = 0; i < Solver.n; i++) for (int j = 0; j < Solver.n; j++) {
-
-            strBuild.append(tiles[i][j]);
-            strBuild.append(" ");
-
-        }
-
-        toString = strBuild.toString();
-
     }
 
 }

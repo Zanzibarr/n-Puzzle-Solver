@@ -1,39 +1,18 @@
-import java.util.PriorityQueue;
-import java.util.Stack;
-import java.util.Comparator;
-import java.util.HashMap;
+import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.BufferedReader;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.PriorityQueue;
 
 public class Solver {
     
     public static int n;
-    private static String goalBoard;
 
     public static class BoardComparator implements Comparator<Board> {
         public int compare(Board b1, Board b2) {
             return b1.fCost() - b2.fCost();
         }
-    }
-
-    private static String goalBoard() {
-
-        StringBuilder strBuild = new StringBuilder();
-
-        for (int i = 1; i < n*n; i++) {
-
-            strBuild.append(i);
-            strBuild.append(" ");
-
-        }
-
-        strBuild.append("0 ");
-
-        goalBoard = strBuild.toString();
-
-        return goalBoard;
-
     }
 
     public static void main(String[] args) throws IOException {
@@ -65,49 +44,49 @@ public class Solver {
 
     public static int solve(String root) {
 
-        Board board = new Board(root + " ");
-        board.root();
-
         final PriorityQueue<Board> nextBoards = new PriorityQueue<>(new BoardComparator());
         final HashMap<String, String> visited = new HashMap<>();
+
+        Board board = new Board(root + " ");
+        Board[] children;
 
         int index;
         int end;
 
         while (board.hCost() != 0) {
 
-            Board[] children = board.nearby();
+            children = board.nearby();
 
             end = children.length;
             for (index = 0; index < end; index++) {
+
+                if (children[index] == null) break;
 
                 if (!visited.containsKey(children[index].toString()))
                     nextBoards.add(children[index]);
 
             }
 
-            visited.put(board.toString(), board.father());
+            if (!visited.containsKey(board.toString())) visited.put(board.toString(), board.father());
             board = nextBoards.poll();
 
         }
 
-        visited.put(board.toString(), board.father());
-        if (!board.toString().equals(goalBoard()))
-            visited.put(goalBoard, board.toString());
+        if (!visited.containsKey(board.toString())) visited.put(board.toString(), board.father());
 
-        Stack<String> output = new Stack<>();
+        String outBuilder = board.toString();
+        int steps = board.gCost();
 
-        int steps = 0;
+        String[] output = new String[steps+1];
 
-        while (!goalBoard.equals("0")) {
-            output.push(goalBoard);
-            goalBoard = visited.get(goalBoard);
-            steps++;
+        for (int i = steps; i >= 0; i--) {
+            output[i] = outBuilder;
+            outBuilder = visited.get(outBuilder);
         }
-        
-        while (!output.isEmpty()) System.out.println(output.pop());
 
-        return steps - 1;
+        for (int i = 0; i < steps + 1; i++) System.out.println(output[i]);
+        
+        return steps;
 
     }
 
