@@ -208,6 +208,7 @@ public class Board {
      * 
      * Complessità costante
      * 
+     * @param inTiles La matrice di riferimento
      * @param i Indice di riga della cella
      * @param j Indice di colonna della cella
      * @return La manhattan distance della cella in posizione (i, j)
@@ -223,16 +224,17 @@ public class Board {
      * 
      * Complessità costante
      * 
+     * @param inTiles La matrice di riferimento
      * @param i Indice di riga della cella
      * @param j Indice di colonna della cella
      * @return True se avviene un conflitto lineare, false altrimenti
      */
     private static boolean linearConflict(int[][] inTiles, int i, int j) {
 
-        //  ( inTiles[i][j] != 0 )                                                              Controllo che l'eventuale conflitto non sia con la cella vuota
-        //  ( i == (tiles[i][j]-1)/Solver.n || j == (tiles[i][j]-1)%Solver.n );                 Controllo se l'eventuale conflitto avviene sulla stessa riga / colonna
-        //  ( i*Solver.n+j+1 != tiles[i][j] );                                                  Controllo che la cella non sia già in posizione
-        //  ( i*Solver.n+j+1 == tiles[(tiles[i][j]-1)/Solver.n][(tiles[i][j]-1)%Solver.n] );    Controllo se è presente il conflitto
+        //  ( inTiles[i][j] != 0 )                                                                      Controllo che l'eventuale conflitto non sia con la cella vuota
+        //  ( i == (inTiles[i][j]-1)/Solver.n || j == (inTiles[i][j]-1)%Solver.n );                     Controllo se l'eventuale conflitto avviene sulla stessa riga / colonna
+        //  ( i*Solver.n+j+1 != inTiles[i][j] );                                                        Controllo che la cella non sia già in posizione
+        //  ( i*Solver.n+j+1 == inTiles[(inTiles[i][j]-1)/Solver.n][(inTiles[i][j]-1)%Solver.n] );      Controllo se è presente il conflitto
 
         return ( inTiles[i][j] != 0 ) && ( i == (inTiles[i][j]-1)/Solver.n || j == (inTiles[i][j]-1)%Solver.n ) && ( i*Solver.n+j+1 != inTiles[i][j] ) && ( i*Solver.n+j+1 == inTiles[(inTiles[i][j]-1)/Solver.n][(inTiles[i][j]-1)%Solver.n] );
     

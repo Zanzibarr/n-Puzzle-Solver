@@ -8,6 +8,8 @@ import java.util.PriorityQueue;
 public class Solver {
     
     public static int n;
+    static final PriorityQueue<Board> nextBoards = new PriorityQueue<>(new BoardComparator());
+    static final HashMap<String, String> visited = new HashMap<>();
 
     public static class BoardComparator implements Comparator<Board> {
         public int compare(Board b1, Board b2) {
@@ -43,9 +45,6 @@ public class Solver {
     }
 
     public static int solve(String root) {
-
-        final PriorityQueue<Board> nextBoards = new PriorityQueue<>(new BoardComparator());
-        final HashMap<String, String> visited = new HashMap<>();
 
         Board board = new Board(root + " ");
         Board[] children;
