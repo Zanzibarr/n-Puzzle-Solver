@@ -71,7 +71,7 @@ public class Board {
         hCost = h;
 
         //Rimuovo il contributo all'euristica dato dalla cella che viene spostata
-        hCost -=  manhattan(inTiles, nIn[0], nIn[1]);
+        hCost -= manhattan(inTiles, nIn[0], nIn[1]);
         if (linearConflict(inTiles, nIn[0], nIn[1])) hCost -= 2;
 
         for (int i = 0; i < Solver.n; i++) for (int j = 0; j < Solver.n; j++) {
@@ -92,7 +92,7 @@ public class Board {
         }
 
         //Aggiungo il contributo all'euristica dato dalla cella spostata
-        hCost +=  manhattan(tiles, z[0], z[1]);
+        hCost += manhattan(tiles, z[0], z[1]);
         if (linearConflict(tiles, z[0], z[1])) hCost += 2;
         
         zero = nIn[0] * Solver.n + nIn[1];
@@ -121,7 +121,7 @@ public class Board {
         final int[][] off = {{(z[0]-1),z[1]},{z[0],(z[1]-1)},{(z[0]+1),z[1]},{z[0],(z[1]+1)}};
 
         Board[] ret = new Board[4];
-        int counter = 0;
+        byte counter = 0;
 
         for (byte i = 0; i < 4; i++) {
 
@@ -130,7 +130,7 @@ public class Board {
 
         }
 
-        for (int i = counter; i < 4; i++) ret[i] = null;
+        for (byte i = counter; i < 4; i++) ret[i] = null;
         
         return ret;
 
