@@ -32,19 +32,12 @@ public class Solver {
 
         fileReader.close();
         file.close();
-
-        /**/long start = System.nanoTime();
         
-        int moves = solve(rt);
-
-        /**/long finish = System.nanoTime();
-        /**/System.out.println((double)(finish - start) / 1000000000l+" seconds");
-
-        System.out.println(moves+" moves");
+        solve(rt);
 
     }
 
-    public static int solve(String root) {
+    public static void solve(String root) {
 
         Board board = new Board(root + " ");
         Board[] children;
@@ -83,9 +76,9 @@ public class Solver {
             outBuilder = visited.get(outBuilder);
         }
 
+        System.out.println(steps);
+
         for (int i = 0; i < steps + 1; i++) System.out.println(output[i]);
-        
-        return steps;
 
     }
 
