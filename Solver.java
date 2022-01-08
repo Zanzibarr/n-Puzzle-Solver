@@ -59,7 +59,9 @@ public class Solver {
 
             }
 
-            if (!visited.containsKey(board.toString())) visited.put(board.toString(), board.father());
+            if (!visited.containsKey(board.toString()))
+                visited.put(board.toString(), board.father());
+            
             board = nextBoards.poll();
 
         }
