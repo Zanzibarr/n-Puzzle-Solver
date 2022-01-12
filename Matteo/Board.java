@@ -34,7 +34,7 @@ public class Board {
             tiles[i][j] = Integer.parseInt(values[i*Solver.n+j]);
 
             if (tiles[i][j] != 0)
-                hCost +=  manhattan(tiles, i, j);  //manhattan
+                hCost +=  manhattan(tiles[i][j], i, j);  //manhattan
             else
                 zero = i*Solver.n+j;
             
@@ -71,7 +71,7 @@ public class Board {
         hCost = h;
 
         //Rimuovo il contributo all'euristica dato dalla cella che viene spostata
-        hCost -= manhattan(inTiles, nIn[0], nIn[1]);
+        hCost -= manhattan(inTiles[nIn[0]][nIn[1]], nIn[0], nIn[1]);
         if (linearConflict(inTiles, nIn[0], nIn[1])) hCost -= 2;
 
         for (int i = 0; i < Solver.n; i++) for (int j = 0; j < Solver.n; j++) {
@@ -92,7 +92,7 @@ public class Board {
         }
 
         //Aggiungo il contributo all'euristica dato dalla cella spostata
-        hCost += manhattan(tiles, z[0], z[1]);
+        hCost += manhattan(tiles[z[0]][z[1]], z[0], z[1]);
         if (linearConflict(tiles, z[0], z[1])) hCost += 2;
         
         zero = nIn[0] * Solver.n + nIn[1];
@@ -213,9 +213,9 @@ public class Board {
      * @param j Indice di colonna della cella
      * @return La manhattan distance della cella in posizione (i, j)
      */
-    private static int manhattan(int[][] inTiles, int i, int j) {
+    private static int manhattan(int value, int i, int j) {
         
-        return Math.abs(i - (inTiles[i][j]-1)/Solver.n) + Math.abs(j - (inTiles[i][j]-1)%Solver.n);
+        return Math.abs(i - (value-1)/Solver.n) + Math.abs(j - (value-1)%Solver.n);
     
     }
 
