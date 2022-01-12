@@ -33,10 +33,10 @@ public class Board {
 
             tiles[i][j] = Integer.parseInt(values[i*Solver.n+j]);
 
-            if (tiles[i][j] == 0)
-                zero = i*Solver.n+j;
-            else
+            if (tiles[i][j] != 0)
                 hCost +=  manhattan(tiles, i, j);  //manhattan
+            else
+                zero = i*Solver.n+j;
             
         }
         
@@ -111,7 +111,7 @@ public class Board {
      * Genera le possibili posizioni raggiungibili copiando la posizione attuale, e facendo scambi accurati
      * tra la cella vuota e una delle celle adiacenti, aggiornando tutte le variabili interne sensibili a questi cambiamenti.
      * 
-     * Complessità di O(n^2) ereditata dal costruttore privato Board() e dal metodo CalculateString()
+     * Complessità di O(n^2) ereditata dal costruttore privato Board()
      * 
      * @return Un array contenente le possibili mosse raggiungibili dalla Board chiamante
      */
@@ -131,7 +131,7 @@ public class Board {
         }
 
         for (byte i = counter; i < 4; i++) ret[i] = null;
-        
+
         return ret;
 
     }
