@@ -17,8 +17,6 @@ public class Solver{
     }
     public static void main(String args[]) throws IOException{
 
-        long start = System.nanoTime();
-
         if(args.length <= 0) System.exit(1);
         
         FileReader file = new FileReader(args[0]);
@@ -45,10 +43,6 @@ public class Solver{
         bd = cg.poll();
 
         System.out.println(bd.getgcost());
-
-        long end = System.nanoTime();
-
-        System.out.println((double)(end - start)/1000000000l + " seconds");
        
 
     }

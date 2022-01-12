@@ -27,8 +27,6 @@ public class Solver {
 
     public static void main(String[] args)  throws IOException {
 
-        long start = System.nanoTime();
-
         if(args.length < 1) {
             System.out.println("Missing Input File.");
             System.exit(1);
@@ -70,9 +68,6 @@ public class Solver {
         for(int i = 0; i < mosse + 1; i++) {
             System.out.println(moves[i]);
         }
-
-        long end = System.nanoTime();
-        System.out.println((double)(end - start)/1000000000l + " seconds.");
 
     }
 }

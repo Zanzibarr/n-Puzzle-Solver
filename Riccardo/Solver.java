@@ -29,7 +29,6 @@ public class Solver {
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
 		
-		double initial = System.currentTimeMillis();
 		priorityQueue.add(reachInput(args[0]));
 		while(priorityQueue.peek().data[1] != 0){ solve(priorityQueue.poll()); }
 		
@@ -40,10 +39,6 @@ public class Solver {
 			out.write((passage+ "\n").getBytes());
 		}
 		out.flush();
-
-		double finale = System.currentTimeMillis();
-		System.out.println(finale-initial);
-
 
 	}
 	

@@ -32,13 +32,8 @@ public class Solver {
 
         fileReader.close();
         file.close();
-
-        long start = System.nanoTime();
         
         solve(rt);
-
-        long end = System.nanoTime();
-        System.out.println((double)(end - start)/1000000000l + " seconds.");
 
     }
 

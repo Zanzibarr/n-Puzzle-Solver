@@ -23,13 +23,7 @@ public class Solver {
 
             Board b = new Board(tiles);
 
-            long before = System.nanoTime();
             solve(b);
-            long after = System.nanoTime();
-
-            double time = (double) (after-before)/1_000_000_000;
-
-            System.out.println("Tempo percorso: " + time);
     }
 
     public static void solve(Board b) {
