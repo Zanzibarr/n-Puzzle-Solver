@@ -1,3 +1,7 @@
+/**
+ * Class Board
+ * @author Zanella Matteo   20000139    matteo.zanella.3@studenti.unipd.it
+ */
 public class Board {
 
     private int[][] tiles;
@@ -5,7 +9,6 @@ public class Board {
     private int zero;
     private int fatherZero;
     private int hCost;
-    private int lCost;
     private int gCost;
     
     private String toString;
@@ -29,7 +32,6 @@ public class Board {
 
         tiles = new int[Solver.n][Solver.n];
         hCost = 0;
-        lCost = 0;
 
         for (int i = 0; i < Solver.n; i++) for (int j = 0; j < Solver.n; j++) {
 
@@ -58,13 +60,13 @@ public class Board {
      * Complessità di O(n^2)
      * 
      * @param inTiles La matrice da ricopiare (deep copy)
-     * @param z Le coordinate dello zero nemma disposizione chiamante
      * @param z La posizione dello zero nella Board chiamante
+     * @param nIn La posizione dell'elemento da spostare
      * @param h Il manhattan della Board chiamante
      * @param g Il numero di passi della Board chiamante
      * @param f La rappresentazione a stringa della Board chiamante
      */
-    private Board(int[][] inTiles, int z, int[] nIn, int h, int g, String f) {
+    private Board(int[][] inTiles, int z, int nIn, int h, int g, String f) {
 
         StringBuilder strBuild = new StringBuilder();
         tiles = new int[Solver.n][Solver.n];
@@ -73,17 +75,18 @@ public class Board {
         int col = z%Solver.n;
 
         hCost = h;
-        lCost = 0;
 
         //Rimuovo il contributo all'euristica dato dalla cella che viene spostata
-        hCost -= manhattan(inTiles[nIn[0]][nIn[1]], nIn[0], nIn[1]);
-        if (linearConflict(inTiles, nIn[0], nIn[1])) hCost -= 2;
+        hCost -= manhattan(inTiles[nIn/Solver.n][nIn%Solver.n], nIn/Solver.n, nIn%Solver.n);
+        if (linearConflict(inTiles, nIn/Solver.n, nIn%Solver.n)) hCost -= 2;
 
-        for (int i = 0; i < Solver.n; i++) for (int j = 0; j < Solver.n; j++) {
+        int i, j;
+
+        for (i = 0; i < Solver.n; i++) for (j = 0; j < Solver.n; j++) {
 
             if (row == i && col == j)
-                tiles[i][j] = inTiles[nIn[0]][nIn[1]];
-            else if (nIn[0] == i && nIn[1] == j)
+                tiles[i][j] = inTiles[nIn/Solver.n][nIn%Solver.n];
+            else if (nIn/Solver.n == i && nIn%Solver.n == j)
                 tiles[i][j] = 0;
             else
                 tiles[i][j] = inTiles[i][j];
@@ -100,7 +103,7 @@ public class Board {
         hCost += manhattan(tiles[row][col], row, col);
         if (linearConflict(tiles, row, col)) hCost += 2;
 
-        zero = nIn[0] * Solver.n + nIn[1];
+        zero = nIn;
         gCost = g + 1;
         toString = strBuild.toString();
         father = f;
@@ -131,7 +134,7 @@ public class Board {
         for (byte i = 0; i < 4; i++) {
 
             if (off[i][0] >= 0 && off[i][0] < Solver.n && off[i][1] >= 0 && off[i][1] < Solver.n && off[i][0]*Solver.n+off[i][1] != fatherZero)
-                ret[counter++] = new Board(tiles, zero, off[i], hCost, gCost, toString);
+                ret[counter++] = new Board(tiles, zero, off[i][0]*Solver.n + off[i][1], hCost, gCost, toString);
 
         }
 
@@ -152,7 +155,7 @@ public class Board {
      */
     public int fCost() {
 
-        return hCost + lCost + gCost;
+        return hCost + gCost;
 
     }
 
@@ -225,7 +228,7 @@ public class Board {
     }
 
     /**
-     * Metodo chiamato per determinare se la cella nella posizione (i, j) genera un conflitto lineare
+     * Metodo chiamato per determinare se la cella nella posizione (i, j) genera un conflitto lineare (versione semplificata)
      * 
      * Complessità costante
      * 

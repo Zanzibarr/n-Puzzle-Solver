@@ -5,6 +5,10 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.PriorityQueue;
 
+/**
+ * Class Solver
+ * @author Zanella Matteo   20000139    matteo.zanella.3@studenti.unipd.it
+ */
 public class Solver {
     
     public static int n;
@@ -32,24 +36,18 @@ public class Solver {
 
         fileReader.close();
         file.close();
-        
-        solve(rt);
 
-    }
-
-    public static void solve(String root) {
-
-        Board board = new Board(root + " ");
+        Board board = new Board(rt + " ");
         Board[] children;
 
         int index;
-        int end;
+        byte end;
 
         while (board.hCost() != 0) {
 
             children = board.nearby();
 
-            end = children.length;
+            end = (byte)children.length;
             for (index = 0; index < end; index++) {
 
                 if (children[index] == null) break;
