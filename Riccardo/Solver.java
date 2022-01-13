@@ -16,18 +16,23 @@ public class Solver {
 	static int size;
 
 	public static Board reachInput (String file) throws FileNotFoundException, IOException{
+		
 		BufferedReader br = new BufferedReader(new FileReader(file));
 		size = Integer.parseInt(br.readLine());
 		StringTokenizer st = new StringTokenizer(br.readLine());
-		final int[] tiles = new int[size*size];
+		final int length = size*size;
+		final int[] tiles = new int[length];
 
-		for(int i = 0; i < tiles.length; i++){ tiles[i] = Integer.parseInt(st.nextToken()); }
+		for(int i = 0; i < length; i++){ tiles[i] = Integer.parseInt(st.nextToken()); }
 		br.close();
 		
 		return new Board(tiles);
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, IOException {
+
+		double c = System.currentTimeMillis();
+
 		priorityQueue.add(reachInput(args[0]));
 		while(priorityQueue.peek().manhattan != 0){ solve(priorityQueue.poll()); }
 		
@@ -38,7 +43,8 @@ public class Solver {
 			out.write((passage+ "\n").getBytes());
 		}
 		out.flush();
-
+		double d = System.currentTimeMillis();
+		System.out.println(d-c);
 	}
 	
 	static String[] path(Board destination) {

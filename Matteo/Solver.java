@@ -66,7 +66,7 @@ public class Solver {
 
         }
 
-        if (!visited.containsKey(board.toString())) visited.put(board.toString(), board.father());
+        visited.put(board.toString(), board.father());
 
         String outBuilder = board.toString();
         int steps = board.gCost();

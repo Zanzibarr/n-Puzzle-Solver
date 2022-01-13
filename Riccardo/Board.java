@@ -1,13 +1,75 @@
+import static java.util.Arrays.binarySearch;
 public class Board implements Comparable<Board> {
 
 	String pater;
-	private String toString;
 	private final int[] board;
 	int move;
 	int manhattan;
 	private byte lastMove; //0 up, 1 down, 2 left, 3 right; 
 	private int zero;
 
+	public static int linearConflict(int[] tiles, int rc, int num){
+		int inversions = 0;
+
+		if(rc == 0) {
+			int[] a = new int[Solver.size];
+			System.arraycopy(tiles, Solver.size*num, a, 0, Solver.size);
+
+			int min = Solver.size*num + 1;
+			int max = (Solver.size*num + Solver.size<0) ? Solver.size*num + Solver.size : 0;
+
+			int x = max;
+			boolean end = ((a[0] != 0) && a[0] == x--);
+			for (int i = 1; i < Solver.size; i++) { end &= ((a[i] != 0) && a[i] == x--); }
+
+			if(end) return Solver.size-1;
+
+			for (int i = 1; i < Solver.size; i++) {
+				if (a[i] != 0 && a[i] >= min && a[i] <= max) {
+					for (int j = 0; j < i; j++) {
+						if (a[j] != 0 && a[j] >= min && a[j] <= max) {
+							if ((a[i] < a[j]) != (i < j)) {
+								inversions++;
+							}
+						}
+					}
+				} 
+			}
+
+
+		}
+		else {
+			int[] a = new int[Solver.size];
+				for (int i = 0, j = num; i < Solver.size; i++, j+= Solver.size) {
+					a[i] = tiles[j];
+				}
+			int[] des = new int[Solver.size];
+			for (int i = 0, j = num+1; i < Solver.size; i++, j+= Solver.size) {
+				des[i] = (j < Solver.size*Solver.size) ? j : 0;
+			}
+
+			int x = Solver.size-1;
+			boolean end = ((a[0] != 0) && a[0] == des[x--]);
+			for (int i = 1; i < Solver.size; i++) {
+				end &= ((a[i] != 0) && a[i] == des[x--]);
+			}
+			if(end) return Solver.size-1;
+
+			for (int i = 1, iPos; i < Solver.size; i++) {
+				if (a[i] != 0 && 0 <= (iPos = binarySearch(des, a[i]))) {
+					for (int j = 0, jPos; j < i; j++) {
+						if (a[j] != 0 && 0 <= (jPos = binarySearch(des, a[j]))) {
+							if ((a[i] < a[j]) != (i < j)) {
+								inversions++;
+							}
+						}
+					}
+				}
+			}
+		}
+			return inversions;
+	}
+	
 	public Board(int [][] tiles) {
 		this(matrixToArray(tiles));
 	}
@@ -28,9 +90,7 @@ public class Board implements Comparable<Board> {
 		move = 0; //0 move initial state
 		manhattan = manhattan();
 		lastMove = -1;
-		toString = personaltoString(board);
 	}
-
 	public Board(int[] tiles, String _pater, int _move, byte _lastMove, int _manhattan, int _zero) {
 		board = tiles;
 		pater = _pater;
@@ -38,8 +98,11 @@ public class Board implements Comparable<Board> {
 		lastMove = _lastMove;
 		manhattan = _manhattan;
 		zero = _zero;
-		toString = personaltoString(board);
 	}
+
+	//0 riga, 1 colonna
+	
+
 
 	public int manhattan() {
 		int tmp = 0;
@@ -51,8 +114,12 @@ public class Board implements Comparable<Board> {
 			}
 		}
 
-		for (int j = 0; j < board.length; j++) { if(VeryBadlinearConflict(board, j)) tmp++; }
-
+		int conflict = 0;
+		for (int j = 0; j < Solver.size; j++) { 
+			conflict += linearConflict(board, 0, j);
+			conflict += linearConflict(board, 1, j);
+		}
+		tmp += (2*conflict);
 		return tmp;
 	}
 
@@ -61,7 +128,7 @@ public class Board implements Comparable<Board> {
 	private int getPriority() { return move + manhattan; }
 	
 	public int compareTo(Board o) {	 return this.getPriority() - o.getPriority(); }
-	private static String personaltoString(int[] board) {
+	public String toString() {
 		StringBuilder sb = new StringBuilder();
 		
 		for (int i : board) {
@@ -70,8 +137,6 @@ public class Board implements Comparable<Board> {
 		}
 		return sb.toString();
 	}
-
-	public String toString() { return toString; }
 	
 	private Board move(int xIndex, int yIndex) {
 		final int[] zArray = {(zero/Solver.size),(zero%Solver.size)};
@@ -84,13 +149,25 @@ public class Board implements Comparable<Board> {
 		int newManhattan = manhattan;
 
 		newManhattan -= mh(tmpTiles[tile], tile);
-        if (VeryBadlinearConflict(tmpTiles, tile)) newManhattan -= 2;
+        //if (VeryBadlinearConflict(tmpTiles, tile)) newManhattan -= 2;
+		/*for (int i = 0; i < Solver.size; i++) {
+			newManhattan -= 2*linearConflict(tmpTiles, 0, i);
+			newManhattan -= 2*linearConflict(tmpTiles, 1, i);
+		}*/
+		newManhattan -= 2*linearConflict(tmpTiles, 0, tile/Solver.size);
+		newManhattan -= 2*linearConflict(tmpTiles, 1, tile%Solver.size);
 
 		tmpTiles[zero] = tmpTiles[tile];
 		tmpTiles[tile] = 0;
 		
 		newManhattan += mh(tmpTiles[zero], zero);
-        if (VeryBadlinearConflict(tmpTiles, zero)) newManhattan += 2;
+        //if (VeryBadlinearConflict(tmpTiles, zero)) newManhattan += 2;
+		/*for (int i = 0; i < Solver.size; i++) {
+			newManhattan += 2*linearConflict(tmpTiles, 0, i);
+			newManhattan += 2*linearConflict(tmpTiles, 1, i);
+		}*/
+		newManhattan += 2*linearConflict(tmpTiles, 0, zArray[0]);
+		newManhattan += 2*linearConflict(tmpTiles, 1, zArray[1]);
 
 		byte newLastMove;
 		if(xIndex == 0 && yIndex != 0){

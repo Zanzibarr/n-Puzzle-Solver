@@ -5,6 +5,7 @@ public class Board {
     private int zero;
     private int fatherZero;
     private int hCost;
+    private int lCost;
     private int gCost;
     
     private String toString;
@@ -28,6 +29,7 @@ public class Board {
 
         tiles = new int[Solver.n][Solver.n];
         hCost = 0;
+        lCost = 0;
 
         for (int i = 0; i < Solver.n; i++) for (int j = 0; j < Solver.n; j++) {
 
@@ -42,7 +44,7 @@ public class Board {
         
         //Il linear conflict può essere usato solo a matrice completa
         for (int i = 0; i < Solver.n; i++) for (int j = 0; j < Solver.n; j++) if (linearConflict(tiles, i, j)) hCost++;  //linear conflict
-        
+
         gCost = 0;
         father = null;
         fatherZero = -1;
@@ -57,18 +59,21 @@ public class Board {
      * 
      * @param inTiles La matrice da ricopiare (deep copy)
      * @param z Le coordinate dello zero nemma disposizione chiamante
-     * @param nIn Le coordinate della cella da cambiare con lo zero
+     * @param z La posizione dello zero nella Board chiamante
      * @param h Il manhattan della Board chiamante
      * @param g Il numero di passi della Board chiamante
      * @param f La rappresentazione a stringa della Board chiamante
-     * @param fZero La posizione dello zero nella Board chiamante
      */
-    private Board(int[][] inTiles, int[] z, int[] nIn, int h, int g, String f, int fZero) {
+    private Board(int[][] inTiles, int z, int[] nIn, int h, int g, String f) {
 
         StringBuilder strBuild = new StringBuilder();
         tiles = new int[Solver.n][Solver.n];
 
+        int row = z/Solver.n;
+        int col = z%Solver.n;
+
         hCost = h;
+        lCost = 0;
 
         //Rimuovo il contributo all'euristica dato dalla cella che viene spostata
         hCost -= manhattan(inTiles[nIn[0]][nIn[1]], nIn[0], nIn[1]);
@@ -76,7 +81,7 @@ public class Board {
 
         for (int i = 0; i < Solver.n; i++) for (int j = 0; j < Solver.n; j++) {
 
-            if (z[0] == i && z[1] == j)
+            if (row == i && col == j)
                 tiles[i][j] = inTiles[nIn[0]][nIn[1]];
             else if (nIn[0] == i && nIn[1] == j)
                 tiles[i][j] = 0;
@@ -92,14 +97,14 @@ public class Board {
         }
 
         //Aggiungo il contributo all'euristica dato dalla cella spostata
-        hCost += manhattan(tiles[z[0]][z[1]], z[0], z[1]);
-        if (linearConflict(tiles, z[0], z[1])) hCost += 2;
-        
+        hCost += manhattan(tiles[row][col], row, col);
+        if (linearConflict(tiles, row, col)) hCost += 2;
+
         zero = nIn[0] * Solver.n + nIn[1];
         gCost = g + 1;
         toString = strBuild.toString();
         father = f;
-        fatherZero = fZero;
+        fatherZero = z;
 
     }
 
@@ -126,7 +131,7 @@ public class Board {
         for (byte i = 0; i < 4; i++) {
 
             if (off[i][0] >= 0 && off[i][0] < Solver.n && off[i][1] >= 0 && off[i][1] < Solver.n && off[i][0]*Solver.n+off[i][1] != fatherZero)
-                ret[counter++] = new Board(tiles, z, off[i], hCost, gCost, toString, zero);
+                ret[counter++] = new Board(tiles, zero, off[i], hCost, gCost, toString);
 
         }
 
@@ -147,7 +152,7 @@ public class Board {
      */
     public int fCost() {
 
-        return hCost + gCost;
+        return hCost + lCost + gCost;
 
     }
 
