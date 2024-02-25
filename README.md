@@ -33,9 +33,7 @@ Then I used the priority queue to explore one position at a time, exploring the 
 Before I've mentioned that the position with the lowest cost is the one with higher priority; but how did I obtain this value?
 
 When we use the A* algorithm, we have a function $f(x)$ which is obtained as the sum of the heuristic function and a cost function:
-$$
-f(x)=g(x)+h(x)
-$$
+$$f(x)=g(x)+h(x)$$
 - $g(x)$ is the cost of reaching the current position $x$ (the number of steps)
 - $h(x)$ is an estimate of the missing steps required to reach the final position.
     I've used the manhattan heuristic combined with the linear conflict heuristic
