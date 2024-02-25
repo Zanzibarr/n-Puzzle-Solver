@@ -40,9 +40,7 @@ $$f(x)=g(x)+h(x)$$
 
 #### Manhattan Heuristic
 The manhattan heuristic is obtained by adding for each cell the distance to it's final position:
-$$
-h(c)=|c.x-\text{goal}(c).x|+|c.y-\text{goal}(c).y|
-$$
+$$h(c)=|c.x-\text{goal}(c).x|+|c.y-\text{goal}(c).y|$$
 
 #### Linear Conflict
 The linear conflict consists in the fact that if two cells in the same line (or column) must eventually swap places, then one of them must change line (or column) in order to let the other one through, thus if a conflict happens we can consider 2 more moves in the heuristics.
