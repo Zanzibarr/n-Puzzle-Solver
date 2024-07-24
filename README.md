@@ -11,6 +11,17 @@ We had to design an algorithm based on the <a href="https://en.wikipedia.org/wik
 - The first line is reserved to the size of the problem
 - The second line is reserved to the elements of the puzzle (row major, left to right) using the 0 as the empty cell.
 
+## How to run
+Compile the solver:
+```bash
+javac Solver.java
+```
+and then run the solver
+>*put in the file board.txt the file representing the instance or specify your file (input path is relative to the root dir of this repo)*
+```bash
+java Solver board.txt
+```
+
 ## How it works
 ### The structure
 First I've built the class for the board, which contains:
