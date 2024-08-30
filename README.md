@@ -1,3 +1,4 @@
+![Java](https://img.shields.io/badge/Java-ED8B00?style=for-the-badge&logo=java&logoColor=white)
 
 This java application was an university project for my Data Structures and Algorithms exam.
 The project was designed as a competition between students, to design the fastest algorithm to solve a generalized <a href="https://en.wikipedia.org/wiki/15_Puzzle" target="_blank" rel="noreferrer">15-Puzzle</a> with the minimum number of moves.
